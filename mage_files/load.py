@@ -1,47 +1,27 @@
-{
- "cells": [
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "from mage_ai.settings.repo import get_repo_path\n",
-    "from mage_ai.io.bigquery import BigQuery\n",
-    "from mage_ai.io.config import ConfigFileLoader\n",
-    "from pandas import DataFrame\n",
-    "from os import path\n",
-    "\n",
-    "if 'data_exporter' not in globals():\n",
-    "    from mage_ai.data_preparation.decorators import data_exporter\n",
-    "\n",
-    "\n",
-    "@data_exporter\n",
-    "def export_data_to_big_query(data, **kwargs) -> None:\n",
-    "    \"\"\"\n",
-    "    Template for exporting data to a BigQuery warehouse.\n",
-    "    Specify your configuration settings in 'io_config.yaml'.\n",
-    "\n",
-    "    Docs: https://docs.mage.ai/design/data-loading#bigquery\n",
-    "    \"\"\"\n",
-    "    for keys,value in data.items():\n",
-    "        table_id = 'my-test-project-396608.uber_data_eng.{}'.format(keys)\n",
-    "        config_path = path.join(get_repo_path(), 'io_config.yaml')\n",
-    "        config_profile = 'default'\n",
-    "        BigQuery.with_config(ConfigFileLoader(config_path, config_profile)).export(\n",
-    "            DataFrame(value),\n",
-    "            table_id,\n",
-    "            if_exists='replace',  # Specify resolution policy if table name already exists\n",
-    "        )\n"
-   ]
-  }
- ],
- "metadata": {
-  "language_info": {
-   "name": "python"
-  },
-  "orig_nbformat": 4
- },
- "nbformat": 4,
- "nbformat_minor": 2
-}
+from mage_ai.settings.repo import get_repo_path
+from mage_ai.io.bigquery import BigQuery
+from mage_ai.io.config import ConfigFileLoader
+from pandas import DataFrame
+from os import path
+
+if 'data_exporter' not in globals():
+    from mage_ai.data_preparation.decorators import data_exporter
+
+
+@data_exporter
+def export_data_to_big_query(data, **kwargs) -> None:
+    """
+    Template for exporting data to a BigQuery warehouse.
+    Specify your configuration settings in 'io_config.yaml'.
+
+    Docs: https://docs.mage.ai/design/data-loading#bigquery
+    """
+    for keys,value in data.items():
+        table_id = 'my-test-project-396608.uber_data_eng.{}'.format(keys)
+        config_path = path.join(get_repo_path(), 'io_config.yaml')
+        config_profile = 'default'
+        BigQuery.with_config(ConfigFileLoader(config_path, config_profile)).export(
+            DataFrame(value),
+            table_id,
+            if_exists='replace',  # Specify resolution policy if table name already exists
+        )
